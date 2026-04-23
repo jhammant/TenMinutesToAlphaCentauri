@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ten Minutes to Alpha Centauri — An interactive relativity explainer</title>
+
+<meta name="description" content="Alpha Centauri is 4.37 light-years away. On paper that's a 75,000-year trip. With relativity on your side you could be there for breakfast — and only 10 minutes would pass on your watch. An interactive explainer of how Einstein lets you cheat the clock." />
+<meta property="og:title" content="Ten Minutes to Alpha Centauri" />
+<meta property="og:description" content="4.37 light-years in 10 minutes flat. An interactive relativity explainer — play with the speed dial and watch Einstein bend your clock." />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Ten Minutes to Alpha Centauri" />
+<meta name="twitter:description" content="4.37 light-years in 10 minutes flat. An interactive relativity explainer — play with the speed dial and watch Einstein bend your clock." />
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x2728;</text></svg>" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #05030c;
+    --bg-2: #0c0718;
+    --ink: #f4ecd8;
+    --ink-dim: rgba(244, 236, 216, 0.64);
+    --ink-faint: rgba(244, 236, 216, 0.38);
+    --amber: #ffb347;
+    --coral: #ff6b5e;
+    --cyan: #7fd1ff;
+    --lime: #b8ff8e;
+    --violet: #c79dff;
+    --glass: rgba(16, 10, 28, 0.55);
+    --glass-border: rgba(255, 179, 71, 0.18);
+    --mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* Starfield canvas behind everything */
+  #stars {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background: radial-gradient(ellipse at 50% 20%, #12082a 0%, #05030c 70%);
+  }
+
+  main { position: relative; z-index: 1; }
+
+  section {
+    padding: 7rem 1.5rem;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 0.9rem;
+  }
+
+  h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+
+  h1 {
+    font-size: clamp(2.6rem, 7vw, 5.5rem);
+    background: linear-gradient(120deg, var(--amber) 0%, var(--coral) 45%, var(--violet) 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    font-size: clamp(1.9rem, 4.5vw, 3.2rem);
+    margin-bottom: 1.2rem;
+  }
+
+  h3 {
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    margin-bottom: 0.6rem;
+    color: var(--ink);
+  }
+
+  p { color: var(--ink-dim); font-size: clamp(1rem, 1.6vw, 1.15rem); }
+  p + p { margin-top: 1rem; }
+  strong { color: var(--ink); font-weight: 600; }
+
+  .accent-amber { color: var(--amber); }
+  .accent-cyan { color: var(--cyan); }
+  .accent-coral { color: var(--coral); }
+  .accent-lime { color: var(--lime); }
+  .mono { font-family: var(--mono); }
+
+  /* ========== Hero ========== */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 5rem;
+    padding-bottom: 4rem;
+  }
+  .hero-tag {
+    display: inline-block;
+    padding: 0.3rem 0.9rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    margin-bottom: 1.5rem;
+  }
+  .hero-lede {
+    font-size: clamp(1.1rem, 2.2vw, 1.35rem);
+    max-width: 620px;
+    margin-top: 1.2rem;
+    color: var(--ink-dim);
+  }
+  .hero-lede strong { color: var(--amber); }
+
+  .hero-stats {
+    margin-top: 3rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    max-width: 820px;
+  }
+  .stat-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 1.1rem 1.2rem;
+    backdrop-filter: blur(12px);
+  }
+  .stat-val {
+    font-family: var(--mono);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--amber);
+    margin-bottom: 0.3rem;
+  }
+  .stat-lbl { font-size: 0.8rem; color: var(--ink-dim); line-height: 1.4; }
+
+  .scroll-hint {
+    margin-top: 4rem;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .scroll-hint::before {
+    content: '';
+    width: 1.5rem;
+    height: 1px;
+    background: var(--ink-faint);
+  }
+
+  /* ========== Distance visualization ========== */
+  .distance-viz {
+    margin-top: 2.5rem;
+    padding: 2rem 1.2rem;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    backdrop-filter: blur(12px);
+  }
+  .ruler {
+    position: relative;
+    height: 60px;
+    background: linear-gradient(90deg, rgba(127, 209, 255, 0.08), rgba(255, 179, 71, 0.08));
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    overflow: visible;
+  }
+  .ruler-tick {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+  .ruler-marker {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    white-space: nowrap;
+  }
+  .ruler-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    box-shadow: 0 0 14px currentColor;
+  }
+  .ruler-label {
+    font-size: 0.72rem;
+    color: var(--ink-dim);
+    font-family: var(--mono);
+    text-align: center;
+  }
+  .ruler-label strong { display: block; color: var(--ink); font-size: 0.8rem; margin-bottom: 0.1rem; }
+  .ruler-marker.left { left: 0%; color: var(--cyan); }
+  .ruler-marker.right { left: 100%; color: var(--amber); }
+  .ruler-marker.right .ruler-dot { width: 18px; height: 18px; background: radial-gradient(circle, #ffd27a, #ff6b5e); }
+  .ruler-marker.left .ruler-dot { background: radial-gradient(circle, #a8dbff, #4488ff); }
+
+  /* ========== Options grid ========== */
+  .options-grid {
+    margin-top: 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+  .option-row {
+    display: grid;
+    grid-template-columns: 2.2rem 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.3rem;
+    background: var(--glass);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-left: 3px solid var(--option-color, var(--amber));
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .option-row:hover {
+    transform: translateX(4px);
+    border-color: rgba(255, 179, 71, 0.25);
+  }
+  .option-icon { font-size: 1.4rem; text-align: center; }
+  .option-label strong { display: block; color: var(--ink); font-size: 1rem; margin-bottom: 0.15rem; }
+  .option-label span { color: var(--ink-faint); font-size: 0.82rem; font-family: var(--mono); }
+  .option-time {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--option-color, var(--amber));
+    text-align: right;
+    white-space: nowrap;
+  }
+  .option-time small { display: block; font-size: 0.68rem; font-weight: 400; color: var(--ink-faint); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.15rem; }
+
+  /* ========== Simulator ========== */
+  #simulator { padding-bottom: 5rem; }
+  .sim-panel {
+    margin-top: 2.5rem;
+    background: linear-gradient(160deg, rgba(255, 179, 71, 0.04), rgba(199, 157, 255, 0.04));
+    border: 1px solid var(--glass-border);
+    border-radius: 22px;
+    padding: 2rem 1.8rem;
+    backdrop-filter: blur(12px);
+  }
+
+  .sim-dial-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+    margin-bottom: 1.8rem;
+  }
+  .sim-readout {
+    font-family: var(--mono);
+    font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+    font-weight: 600;
+    background: linear-gradient(120deg, var(--amber), var(--coral));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.02em;
+    text-align: center;
+  }
+  .sim-readout-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    text-align: center;
+  }
+
+  .sim-slider-wrap {
+    width: 100%;
+    max-width: 560px;
+    position: relative;
+  }
+  .sim-slider-wrap input[type=range] {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    height: 30px;
+  }
+  .sim-slider-wrap input[type=range]::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--cyan) 0%, var(--amber) 50%, var(--coral) 85%, var(--violet) 100%);
+  }
+  .sim-slider-wrap input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 20px rgba(255, 179, 71, 0.8), 0 0 40px rgba(255, 107, 94, 0.4);
+    margin-top: -9px;
+    border: none;
+    cursor: grab;
+  }
+  .sim-slider-wrap input[type=range]::-moz-range-track {
+    height: 4px; border-radius: 2px;
+    background: linear-gradient(90deg, var(--cyan) 0%, var(--amber) 50%, var(--coral) 85%, var(--violet) 100%);
+  }
+  .sim-slider-wrap input[type=range]::-moz-range-thumb {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #fff; border: none;
+    box-shadow: 0 0 20px rgba(255, 179, 71, 0.8);
+  }
+
+  .sim-tick-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.3rem;
+    font-size: 0.65rem;
+    font-family: var(--mono);
+    color: var(--ink-faint);
+    letter-spacing: 0.08em;
+    pointer-events: none;
+  }
+
+  .sim-presets {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: center;
+  }
+  .sim-preset {
+    padding: 0.4rem 0.9rem;
+    font-size: 0.74rem;
+    font-family: var(--mono);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--ink-dim);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sim-preset:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+    background: rgba(255, 179, 71, 0.08);
+  }
+  .sim-preset.active {
+    background: rgba(255, 179, 71, 0.15);
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+
+  .sim-grid {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.9rem;
+  }
+  .sim-cell {
+    padding: 1rem 1.1rem;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+  }
+  .sim-cell-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.5rem;
+  }
+  .sim-cell-val {
+    font-family: var(--mono);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .sim-cell-sub {
+    font-size: 0.75rem;
+    color: var(--ink-dim);
+    margin-top: 0.25rem;
+  }
+
+  .sim-verdict {
+    margin-top: 1.5rem;
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    background: rgba(255, 179, 71, 0.08);
+    border-left: 3px solid var(--amber);
+    font-size: 0.95rem;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+  .sim-verdict strong { color: var(--amber); }
+
+  /* ========== Visualization canvas for the "feel" ========== */
+  .feel-canvas-wrap {
+    position: relative;
+    margin-top: 2.5rem;
+    height: 400px;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+    background: #000;
+  }
+  #feel-canvas { width: 100%; height: 100%; display: block; }
+  .feel-overlay {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    padding: 1rem 1.2rem;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: var(--ink);
+    backdrop-filter: blur(10px);
+    line-height: 1.5;
+  }
+  .feel-overlay strong { color: var(--amber); }
+
+  .feel-grid {
+    margin-top: 1.8rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+  .feel-card {
+    padding: 1.3rem 1.4rem;
+    background: var(--glass);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 14px;
+    backdrop-filter: blur(10px);
+  }
+  .feel-card-icon { font-size: 1.6rem; margin-bottom: 0.6rem; }
+  .feel-card h4 { font-size: 0.95rem; color: var(--ink); margin-bottom: 0.3rem; font-weight: 600; }
+  .feel-card p { font-size: 0.85rem; color: var(--ink-dim); line-height: 1.5; }
+
+  /* ========== The ten minute section ========== */
+  #extreme {
+    padding: 6rem 1.5rem;
+  }
+  .extreme-panel {
+    margin-top: 2.5rem;
+    padding: 2.5rem 2rem;
+    background: linear-gradient(135deg, rgba(255, 107, 94, 0.1), rgba(199, 157, 255, 0.08));
+    border: 1px solid rgba(255, 107, 94, 0.25);
+    border-radius: 22px;
+    backdrop-filter: blur(12px);
+  }
+  .extreme-quote {
+    font-size: clamp(1.3rem, 2.8vw, 1.7rem);
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--ink);
+    padding: 1.5rem 0;
+    border-top: 1px solid rgba(255, 107, 94, 0.2);
+    border-bottom: 1px solid rgba(255, 107, 94, 0.2);
+    margin: 1.5rem 0;
+  }
+  .extreme-quote::before { content: '“'; color: var(--coral); font-size: 2rem; line-height: 0; margin-right: 0.2rem; }
+  .extreme-quote::after { content: '”'; color: var(--coral); font-size: 2rem; line-height: 0; margin-left: 0.1rem; }
+  .extreme-attribution {
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+  .extreme-attribution a { color: var(--cyan); text-decoration: none; border-bottom: 1px dashed rgba(127, 209, 255, 0.3); }
+  .extreme-attribution a:hover { color: var(--amber); border-color: var(--amber); }
+
+  /* ========== Share footer ========== */
+  #share {
+    padding: 6rem 1.5rem 4rem;
+    text-align: center;
+  }
+  .share-buttons {
+    margin-top: 2rem;
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .share-btn {
+    padding: 0.85rem 1.6rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    backdrop-filter: blur(10px);
+  }
+  .share-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--amber);
+    color: var(--amber);
+    box-shadow: 0 10px 30px rgba(255, 179, 71, 0.15);
+  }
+  .share-btn.primary {
+    background: linear-gradient(120deg, var(--amber), var(--coral));
+    color: #1a0a00;
+    border: none;
+  }
+  .share-btn.primary:hover { color: #1a0a00; box-shadow: 0 10px 40px rgba(255, 107, 94, 0.4); }
+
+  footer {
+    text-align: center;
+    padding: 3rem 1.5rem 2rem;
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+  }
+  footer a { color: var(--cyan); text-decoration: none; }
+  footer a:hover { color: var(--amber); }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    section { padding: 5rem 1.2rem; }
+    .option-row { grid-template-columns: 1.8rem 1fr; gap: 0.7rem; padding: 0.9rem 1rem; }
+    .option-time { grid-column: 2; text-align: left; margin-top: 0.3rem; }
+    .ruler-marker.left .ruler-label,
+    .ruler-marker.right .ruler-label { font-size: 0.65rem; }
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<main>
+
+  <!-- ========== HERO ========== -->
+  <section id="hero">
+    <div>
+      <span class="hero-tag">✦ Interactive relativity explainer</span>
+      <h1>Ten Minutes<br/>to Alpha Centauri.</h1>
+      <p class="hero-lede">
+        Our nearest stellar neighbour is <strong>4.37 light-years</strong> away.
+        On paper that's a 75,000-year trip. But Einstein has a loophole:
+        at <em>just the right speed</em>, you could be there before your
+        coffee gets cold — and only <strong>10 minutes</strong> would have passed
+        on your watch.
+      </p>
+      <p class="hero-lede" style="margin-top: 0.8rem;">
+        Scroll to see how. Play with the dial. Feel what light can do to time.
+      </p>
+
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-val">4.37 ly</div>
+          <div class="stat-lbl">Distance to Alpha Centauri system (Proxima, α Cen A & B)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">41.3 Pm</div>
+          <div class="stat-lbl">That's 41,300,000,000,000,000 metres. Or 275,000 AU.</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">c = 3×10⁸ m/s</div>
+          <div class="stat-lbl">The cosmic speed limit. Nothing with mass reaches it. But you can get arbitrarily close.</div>
+        </div>
+      </div>
+
+      <div class="scroll-hint">Scroll to begin the journey</div>
+    </div>
+  </section>
+
+  <!-- ========== DISTANCE ========== -->
+  <section id="distance" class="reveal">
+    <span class="eyebrow">§1 — The distance</span>
+    <h2>How far is 4.37 light-years, really?</h2>
+    <p>
+      Light is the fastest thing in the universe. It goes around Earth
+      <strong>7.5 times every second</strong>. From the Sun to Earth takes it about
+      <strong>8 minutes</strong>. To Pluto, <strong>5.5 hours</strong>. And yet to reach
+      Alpha Centauri — our literal next-door neighbour in the galactic suburbs —
+      it takes light <strong class="accent-amber">four years and four months</strong>.
+    </p>
+    <p style="margin-top: 1rem;">
+      Space is staggeringly empty. If the Sun were a basketball in London,
+      Alpha Centauri would be another basketball… somewhere in Tokyo.
+    </p>
+
+    <div class="distance-viz">
+      <div class="ruler" id="ruler">
+        <!-- ticks inserted by JS -->
+        <div class="ruler-marker left">
+          <div class="ruler-dot"></div>
+          <div class="ruler-label"><strong>☀ Sun</strong>You are here</div>
+        </div>
+        <div class="ruler-marker right">
+          <div class="ruler-dot"></div>
+          <div class="ruler-label"><strong>α Cen</strong>4.37 ly away</div>
+        </div>
+      </div>
+      <p style="font-size: 0.78rem; color: var(--ink-faint); margin-top: 0.8rem; font-family: var(--mono); text-align: center;">
+        Each tick = 1 light-year. Even this ruler is a lie — the real distance is so large your monitor can't represent it honestly.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========== OPTIONS ========== -->
+  <section id="options" class="reveal">
+    <span class="eyebrow">§2 — Travel options (the naïve menu)</span>
+    <h2>Pick your ride.</h2>
+    <p>
+      These are the <em>travel times as Earth sees them</em>. From your living
+      room's point of view, the ship is out there, slogging through space, for
+      all those years. Mission Control is very patient.
+    </p>
+
+    <div class="options-grid" id="options-grid"></div>
+
+    <p style="margin-top: 2rem;">
+      The bottom row is where things get weird. Notice the bracket:
+      <span class="mono accent-amber">[Earth] / [ship]</span>.
+      At relativistic speeds the two clocks disagree —
+      <strong>dramatically</strong>. That's the door we're walking through next.
+    </p>
+  </section>
+
+  <!-- ========== SIMULATOR ========== -->
+  <section id="simulator" class="reveal">
+    <span class="eyebrow">§3 — The speed dial</span>
+    <h2>Turn the dial. Bend time.</h2>
+    <p>
+      Drag the slider. You're setting your cruise velocity as a fraction of
+      light-speed. Watch both clocks — <strong>Earth's</strong> and
+      <strong>yours</strong> — pull apart. At very low speeds they agree. As
+      you approach <span class="mono accent-coral">c</span>,
+      <em>your</em> clock slows to a crawl while Earth's keeps ticking.
+    </p>
+
+    <div class="sim-panel">
+      <div class="sim-dial-wrap">
+        <div>
+          <div class="sim-readout" id="sim-velocity">0.500 c</div>
+          <div class="sim-readout-label">Cruise velocity</div>
+        </div>
+        <div class="sim-slider-wrap">
+          <input type="range" id="sim-slider" min="0" max="10000" value="5000" step="1" aria-label="Velocity as fraction of c" />
+          <div class="sim-tick-labels">
+            <span>0</span>
+            <span>0.5 c</span>
+            <span>0.99 c</span>
+            <span>0.9999999c</span>
+          </div>
+        </div>
+        <div class="sim-presets" id="sim-presets">
+          <button class="sim-preset" data-beta="5.67e-5">Voyager-ish</button>
+          <button class="sim-preset" data-beta="0.1">0.1 c</button>
+          <button class="sim-preset" data-beta="0.5">½ light</button>
+          <button class="sim-preset" data-beta="0.9">0.9 c</button>
+          <button class="sim-preset" data-gamma="224">γ ≈ 224</button>
+          <button class="sim-preset" data-gamma="229900">10-minute trip</button>
+        </div>
+      </div>
+
+      <div class="sim-grid">
+        <div class="sim-cell">
+          <div class="sim-cell-label">γ (Lorentz factor)</div>
+          <div class="sim-cell-val" id="sim-gamma">1.155</div>
+          <div class="sim-cell-sub">How much time slows for you</div>
+        </div>
+        <div class="sim-cell">
+          <div class="sim-cell-label">Earth sees: trip takes</div>
+          <div class="sim-cell-val" id="sim-earth">8.74 years</div>
+          <div class="sim-cell-sub">Clock on Mission Control's wall</div>
+        </div>
+        <div class="sim-cell">
+          <div class="sim-cell-label">You feel: trip takes</div>
+          <div class="sim-cell-val" id="sim-ship">7.57 years</div>
+          <div class="sim-cell-sub">Clock on your wrist</div>
+        </div>
+        <div class="sim-cell">
+          <div class="sim-cell-label">Length ahead shrinks to</div>
+          <div class="sim-cell-val" id="sim-length">3.78 ly</div>
+          <div class="sim-cell-sub">Space squashes in the direction of motion</div>
+        </div>
+      </div>
+
+      <div class="sim-verdict" id="sim-verdict">
+        At half light-speed, you'd age about 7.5 years on the journey while your
+        twin on Earth ages 8.7 years. A decent head-start on retirement.
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== THE FEEL ========== -->
+  <section id="experience" class="reveal">
+    <span class="eyebrow">§4 — What it would feel like</span>
+    <h2>Out the window.</h2>
+    <p>
+      Near light-speed, the universe stops looking like anything you've ever
+      seen. The starfield <em>compresses forward</em> into a brilliant ring
+      around your direction of travel. Stars behind you fade and redden.
+      Stars ahead shift into UV. Use the dial — the same one as above —
+      to look through the cockpit.
+    </p>
+
+    <div class="feel-canvas-wrap">
+      <canvas id="feel-canvas"></canvas>
+      <div class="feel-overlay" id="feel-overlay">
+        <strong>At 0.5 c:</strong> stars noticeably shift forward.
+        Nothing too alarming yet — your coffee isn't even spilling.
+      </div>
+    </div>
+
+    <div class="feel-grid">
+      <div class="feel-card">
+        <div class="feel-card-icon">🕰️</div>
+        <h4>Your watch runs slow</h4>
+        <p>Time literally passes more slowly for you. Not an illusion — the universe is running two clocks, and they're no longer in sync.</p>
+      </div>
+      <div class="feel-card">
+        <div class="feel-card-icon">📐</div>
+        <h4>Space squashes</h4>
+        <p>From your ship's frame, the 4.37 light-year gap shrinks. At γ=230,000, it's about 55 light-seconds wide — so of course you cross it in 10 minutes.</p>
+      </div>
+      <div class="feel-card">
+        <div class="feel-card-icon">🌈</div>
+        <h4>The sky turns into a tunnel</h4>
+        <p>Relativistic aberration bunches all the starlight into a bright forward ring. Behind you: black. Ahead: a pinprick of compressed galaxy.</p>
+      </div>
+      <div class="feel-card">
+        <div class="feel-card-icon">💀</div>
+        <h4>Everyone you knew is gone</h4>
+        <p>You come home to an Earth 8+ years older — or centuries, depending on how hard you pushed the dial. The twin paradox isn't a paradox. It's a bill.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== THE TEN MINUTE TRIP ========== -->
+  <section id="extreme" class="reveal">
+    <span class="eyebrow">§5 — The 10-minute trip</span>
+    <h2>So. Ten minutes?</h2>
+    <p>
+      Yes. If your ship can hit a Lorentz factor of roughly
+      <span class="mono accent-coral">γ ≈ 230,000</span> — a velocity so
+      close to <span class="mono">c</span> you'd need scientific notation
+      to count the nines — then <strong>the entire 4.37-light-year crossing
+      lasts about 600 seconds on your watch</strong>.
+    </p>
+
+    <div class="extreme-panel">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+        <div class="sim-cell" style="background: rgba(0,0,0,0.35);">
+          <div class="sim-cell-label">Earth clock</div>
+          <div class="sim-cell-val" style="color: var(--cyan);">4.37 years</div>
+          <div class="sim-cell-sub">They throw a leaving party, they throw a returning party.</div>
+        </div>
+        <div class="sim-cell" style="background: rgba(0,0,0,0.35);">
+          <div class="sim-cell-label">Your clock</div>
+          <div class="sim-cell-val" style="color: var(--amber);">10 minutes</div>
+          <div class="sim-cell-sub">You re-read a single email.</div>
+        </div>
+        <div class="sim-cell" style="background: rgba(0,0,0,0.35);">
+          <div class="sim-cell-label">Velocity required</div>
+          <div class="sim-cell-val" style="color: var(--coral);">0.99999999999c</div>
+          <div class="sim-cell-sub">Eleven nines. Casual.</div>
+        </div>
+        <div class="sim-cell" style="background: rgba(0,0,0,0.35);">
+          <div class="sim-cell-label">Kinetic energy</div>
+          <div class="sim-cell-val" style="color: var(--violet);">∼ 10²² J / kg</div>
+          <div class="sim-cell-sub">Per kilogram of spaceship. Per. Kilogram.</div>
+        </div>
+      </div>
+
+      <p class="extreme-quote">
+        The universe doesn't care how long your trip took from Earth's point of view. It gives you the clock that comes with your motion. And that clock can tick very, very slowly.
+      </p>
+
+      <p class="extreme-attribution">
+        — Adapted from Gregory Gbur's lovely explainer
+        <a href="https://skullsinthestars.com/2012/09/10/relativity-ten-minutes-to-alpha-centauri/" target="_blank" rel="noopener">"Relativity: Ten Minutes to Alpha Centauri"</a>
+        (Skulls in the Stars, 2012).
+      </p>
+
+      <p style="margin-top: 1.5rem;">
+        There's a catch, of course. <strong>Two</strong>, actually.
+        <strong class="accent-coral">(1)</strong> Nobody on Earth has any idea
+        how to accelerate a spaceship — let alone a human — to
+        γ = 230,000. The energy required approaches <em>silly-physics</em>
+        territory: more than humanity's total annual energy output, for a
+        single kilogram.
+        <strong class="accent-coral">(2)</strong> Even a modest 1g acceleration
+        — which is Earth-gravity-comfortable — would, over months, get you
+        there in about 3.5 years of ship-time. Accelerating hard enough to
+        compress the trip into 10 minutes would paste you against the back
+        wall at <em>millions of g's</em>. Bring a trampoline.
+      </p>
+
+      <p style="margin-top: 1rem;">
+        But the <strong>physics</strong>? The physics permits it.
+        The universe is <em>fine</em> with a 10-minute trip to Alpha Centauri.
+        It just wants you to pay the ticket price — in nines.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========== SHARE ========== -->
+  <section id="share" class="reveal">
+    <span class="eyebrow">§6 — Share the strangeness</span>
+    <h2>Time is negotiable.</h2>
+    <p style="max-width: 640px; margin-left: auto; margin-right: auto;">
+      If this blew your mind even a little, share it with someone who still
+      thinks physics is boring. They're wrong. Physics is the loophole document
+      for reality.
+    </p>
+
+    <div class="share-buttons">
+      <a class="share-btn primary" id="share-linkedin" href="#" target="_blank" rel="noopener">
+        Share on LinkedIn →
+      </a>
+      <a class="share-btn" id="share-twitter" href="#" target="_blank" rel="noopener">
+        Share on X
+      </a>
+      <button class="share-btn" id="share-copy">Copy link</button>
+    </div>
+  </section>
+
+  <footer>
+    Built with vanilla HTML/CSS/JS — no frameworks, no trackers. Physics courtesy of
+    <a href="https://en.wikipedia.org/wiki/Special_relativity" target="_blank" rel="noopener">Special Relativity</a>
+    (A. Einstein, 1905).<br/>
+    Inspired by Gregory Gbur's
+    <a href="https://skullsinthestars.com/2012/09/10/relativity-ten-minutes-to-alpha-centauri/" target="_blank" rel="noopener">Ten Minutes to Alpha Centauri</a>.
+  </footer>
+
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  // ============================================================
+  // CONSTANTS
+  // ============================================================
+  const C = 299792458;                  // m/s
+  const LY = 9.4607e15;                 // metres in a light-year
+  const DIST_LY = 4.37;                 // Alpha Centauri distance (light-years)
+  const DIST_M = DIST_LY * LY;          // metres
+  const YEAR_S = 365.25 * 24 * 3600;    // seconds in a Julian year
+
+  // ============================================================
+  // STARFIELD (background, full-page)
+  // ============================================================
+  const starsCanvas = document.getElementById('stars');
+  const starsCtx = starsCanvas.getContext('2d');
+  let stars = [];
+  let starfieldState = { warp: 0 };  // 0 = still, 1 = warp speed
+
+  function resizeStars() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    starsCanvas.width = window.innerWidth * dpr;
+    starsCanvas.height = window.innerHeight * dpr;
+    starsCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    initStars();
+  }
+
+  function initStars() {
+    const count = Math.min(260, Math.floor(window.innerWidth * window.innerHeight / 8000));
+    stars = [];
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        z: Math.random() * 1 + 0.2,
+        size: Math.random() * 1.4 + 0.3,
+        twinkle: Math.random() * Math.PI * 2,
+      });
+    }
+  }
+
+  function drawStars(t) {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    starsCtx.clearRect(0, 0, w, h);
+    starsCtx.save();
+
+    for (const s of stars) {
+      const alpha = 0.55 + 0.45 * Math.sin(s.twinkle + t * 0.001 * s.z);
+      starsCtx.globalAlpha = alpha * s.z;
+      starsCtx.fillStyle = s.z > 0.85 ? '#fff8e5' : (s.z > 0.6 ? '#ffe9c4' : '#b9cfff');
+      starsCtx.beginPath();
+      starsCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+      starsCtx.fill();
+    }
+    starsCtx.restore();
+  }
+
+  function starsLoop(t) {
+    drawStars(t);
+    requestAnimationFrame(starsLoop);
+  }
+
+  window.addEventListener('resize', resizeStars);
+  resizeStars();
+  requestAnimationFrame(starsLoop);
+
+  // ============================================================
+  // DISTANCE RULER
+  // ============================================================
+  const ruler = document.getElementById('ruler');
+  for (let i = 1; i <= 4; i++) {
+    const tick = document.createElement('div');
+    tick.className = 'ruler-tick';
+    tick.style.left = `${(i / 4.37) * 100}%`;
+    ruler.appendChild(tick);
+  }
+
+  // ============================================================
+  // TRAVEL OPTIONS — Earth-frame travel times at constant velocity
+  // ============================================================
+  // velocity in m/s (for non-relativistic) or as fraction-of-c
+  // we present Earth-time (what people on Earth see)
+  const options = [
+    { icon: '🚶', label: 'On foot (5 km/h)', sub: '1.4 m/s. Bring a hat.', v: 5000 / 3600, color: '#7fd1ff' },
+    { icon: '✈️', label: 'Commercial jet (900 km/h)', sub: 'In-flight movies: many.', v: 250, color: '#7fd1ff' },
+    { icon: '🚀', label: 'Voyager 1 (17 km/s)', sub: 'Humanity\'s fastest-ever probe.', v: 17000, color: '#7fd1ff' },
+    { icon: '☀️', label: 'Parker Solar Probe peak (200 km/s)', sub: 'Sun-scraping record-holder.', v: 200000, color: '#b8ff8e' },
+    { icon: '💥', label: 'Project Orion nuclear pulse (3% c)', sub: '1960s "let\'s nuke our way to the stars."', vFrac: 0.03, color: '#b8ff8e' },
+    { icon: '🪁', label: 'Breakthrough Starshot (20% c)', sub: 'Laser-pushed gram-scale sail.', vFrac: 0.20, color: '#ffb347' },
+    { icon: '⚡', label: 'Fusion torch at 50% c', sub: 'Science-fictional but plausible.', vFrac: 0.50, color: '#ffb347' },
+    { icon: '🛸', label: 'Relativistic rocket @ 1g (flip-and-brake)', sub: 'Constant Earth-gravity acceleration.', special: 'rocket-1g', color: '#ff6b5e' },
+    { icon: '✨', label: 'Cruise at 0.99999c (γ ≈ 224)', sub: 'The "time-dilated dash."', vFrac: 0.99999, color: '#c79dff' },
+    { icon: '🕳️', label: 'Cruise at γ = 230,000', sub: 'Ten minutes, your watch.', special: 'gamma-230k', color: '#c79dff' },
+  ];
+
+  function formatTime(seconds) {
+    if (seconds < 60) return `${seconds.toFixed(0)} seconds`;
+    if (seconds < 3600) return `${(seconds / 60).toFixed(1)} minutes`;
+    if (seconds < 86400) return `${(seconds / 3600).toFixed(1)} hours`;
+    if (seconds < YEAR_S) return `${(seconds / 86400).toFixed(1)} days`;
+    const years = seconds / YEAR_S;
+    if (years < 1e4) return `${years.toFixed(years < 10 ? 2 : years < 100 ? 1 : 0)} years`;
+    if (years < 1e6) return `${(years / 1e3).toFixed(1)}k years`;
+    if (years < 1e9) return `${(years / 1e6).toFixed(1)}M years`;
+    return `${(years / 1e9).toFixed(2)}B years`;
+  }
+
+  function computeEarthShip(opt) {
+    // returns { earth_s, ship_s } in seconds
+    if (opt.special === 'rocket-1g') {
+      // 1g flip-and-brake to 4.37 ly
+      const a = 9.81;
+      const halfD = DIST_M / 2;
+      const phi = a * halfD / (C * C);        // dimensionless
+      const gammaMax = 1 + phi;
+      const tauHalf = (C / a) * Math.acosh(gammaMax);
+      const tHalf   = (C / a) * Math.sqrt(gammaMax * gammaMax - 1);
+      return { earth_s: 2 * tHalf, ship_s: 2 * tauHalf };
+    }
+    if (opt.special === 'gamma-230k') {
+      const gamma = 230000;
+      const v = C * Math.sqrt(1 - 1 / (gamma * gamma));
+      const t = DIST_M / v;
+      return { earth_s: t, ship_s: t / gamma };
+    }
+    const v = opt.v || (opt.vFrac * C);
+    const t = DIST_M / v;
+    const gamma = opt.vFrac ? 1 / Math.sqrt(1 - opt.vFrac * opt.vFrac) : 1;
+    return { earth_s: t, ship_s: t / gamma };
+  }
+
+  const optionsGrid = document.getElementById('options-grid');
+  for (const opt of options) {
+    const { earth_s, ship_s } = computeEarthShip(opt);
+    const row = document.createElement('div');
+    row.className = 'option-row';
+    row.style.setProperty('--option-color', opt.color);
+
+    const showShip = Math.abs(earth_s - ship_s) / earth_s > 0.001;
+    const timeHtml = showShip
+      ? `<small>Earth / Ship</small>${formatTime(earth_s)} <span style="opacity:0.55;">/</span> ${formatTime(ship_s)}`
+      : `<small>Earth time</small>${formatTime(earth_s)}`;
+
+    row.innerHTML = `
+      <div class="option-icon">${opt.icon}</div>
+      <div class="option-label">
+        <strong>${opt.label}</strong>
+        <span>${opt.sub}</span>
+      </div>
+      <div class="option-time">${timeHtml}</div>
+    `;
+    optionsGrid.appendChild(row);
+  }
+
+  // ============================================================
+  // SIMULATOR
+  //   simState.beta is the source of truth. The slider drives it for normal
+  //   dragging; preset clicks set it directly (and move the slider thumb for
+  //   visual feedback only) — this avoids losing precision to the integer
+  //   slider at very-high γ.
+  // ============================================================
+  const slider = document.getElementById('sim-slider');
+  const elV = document.getElementById('sim-velocity');
+  const elG = document.getElementById('sim-gamma');
+  const elE = document.getElementById('sim-earth');
+  const elS = document.getElementById('sim-ship');
+  const elL = document.getElementById('sim-length');
+  const elVerdict = document.getElementById('sim-verdict');
+  const presetBtns = document.querySelectorAll('.sim-preset');
+
+  const SLIDER_MAX = parseInt(slider.max, 10);
+  const BETA_EXPONENT = 10;  // sharper tail — gives finer control near c
+
+  function sliderToBeta(x) {
+    const t = x / SLIDER_MAX;  // 0..1
+    return 1 - Math.pow(1 - t, BETA_EXPONENT);
+  }
+  function betaToSlider(beta) {
+    const t = 1 - Math.pow(Math.max(1 - beta, 1e-15), 1 / BETA_EXPONENT);
+    return Math.round(t * SLIDER_MAX);
+  }
+  function gammaToBeta(gamma) {
+    return Math.sqrt(1 - 1 / (gamma * gamma));
+  }
+
+  const simState = { beta: 0.5, gamma: 1.1547 };  // ½c default
+
+  function formatBeta(beta) {
+    if (beta < 0.001) return `${(beta * C / 1000).toFixed(0)} km/s`;
+    if (beta < 0.999) return `${beta.toFixed(3)} c`;
+    if (beta < 0.999999) return `${beta.toFixed(6)} c`;
+    const nines = Math.max(0, -Math.log10(Math.max(1 - beta, 1e-20)));
+    return `0.${'9'.repeat(Math.min(13, Math.round(nines)))}… c`;
+  }
+
+  function verdict(beta, gamma, shipS) {
+    if (beta < 0.001) return `At this crawl, both clocks agree — relativity doesn't really wake up until you get fast. You'd be long dust before arrival.`;
+    if (beta < 0.1) return `Clocks still agree to within a few parts per thousand. Relativity is technically happening, but nobody at this speed can tell.`;
+    if (beta < 0.5) return `Time dilation now shaves real months off your personal journey. Congratulations — you are officially cheating the clock.`;
+    if (beta < 0.9) return `The ship's clock is running noticeably slower than Earth's. Your twin is ageing faster than you. The bill is coming due.`;
+    if (beta < 0.99) return `γ is getting serious. A few years on your watch buys you a decade back home.`;
+    if (beta < 0.999) return `You are now compressing decades of Earth-time into a few personal years. Welcome to the relativistic regime.`;
+    if (gamma < 1000) return `γ ≈ ${gamma.toFixed(0)}. The trip is weeks-to-days in your frame — but still ~4.37 years on Earth. Light still wins; it just barely.`;
+    if (gamma < 1e5) return `γ ≈ ${Math.round(gamma).toLocaleString()}. Your personal crossing time is measured in hours. Mission Control is still 4.37 years older when you arrive.`;
+    return `γ ≈ ${Math.round(gamma).toLocaleString()}. This is the 10-minute regime. Your watch ticks <strong>${formatTime(shipS)}</strong> while Earth ticks off 4.37 years.`;
+  }
+
+  function render() {
+    const beta = simState.beta;
+    const gamma = simState.gamma;
+    const v = beta * C;
+    const earth_s = DIST_M / v;
+    const ship_s = earth_s / gamma;
+    const contracted_ly = DIST_LY / gamma;
+
+    elV.textContent = formatBeta(beta);
+    elG.textContent = gamma < 10 ? gamma.toFixed(3)
+                      : gamma < 1000 ? gamma.toFixed(1)
+                      : Math.round(gamma).toLocaleString();
+    elE.textContent = formatTime(earth_s);
+    elS.textContent = formatTime(ship_s);
+
+    if (contracted_ly > 0.01) elL.textContent = `${contracted_ly.toFixed(3)} ly`;
+    else if (contracted_ly * LY / (C * 60) > 1) elL.textContent = `${(contracted_ly * LY / (C * 60)).toFixed(1)} light-minutes`;
+    else elL.textContent = `${(contracted_ly * LY / C).toFixed(0)} light-seconds`;
+
+    elVerdict.innerHTML = verdict(beta, gamma, ship_s);
+    updateFeel(beta, gamma);
+
+    // highlight matching preset (compare gamma on a log scale for robustness)
+    presetBtns.forEach(b => {
+      let target;
+      if (b.dataset.beta !== undefined) {
+        target = 1 / Math.sqrt(1 - parseFloat(b.dataset.beta) ** 2);
+      } else {
+        target = parseFloat(b.dataset.gamma);
+      }
+      const ratio = Math.abs(Math.log(target / gamma));
+      b.classList.toggle('active', ratio < 0.03);
+    });
+  }
+
+  function setBeta(beta, opts) {
+    opts = opts || {};
+    // clamp to representable range
+    beta = Math.min(Math.max(beta, 0), 0.9999999999999999);
+    simState.beta = beta;
+    simState.gamma = 1 / Math.sqrt(Math.max(1 - beta * beta, 1e-30));
+    if (opts.moveSlider !== false) {
+      slider.value = betaToSlider(beta);
+    }
+    render();
+  }
+
+  slider.addEventListener('input', () => {
+    const beta = sliderToBeta(parseInt(slider.value, 10));
+    setBeta(beta, { moveSlider: false });
+  });
+
+  presetBtns.forEach(b => {
+    b.addEventListener('click', () => {
+      let beta;
+      if (b.dataset.beta !== undefined) beta = parseFloat(b.dataset.beta);
+      else if (b.dataset.gamma !== undefined) beta = gammaToBeta(parseFloat(b.dataset.gamma));
+      else return;
+      setBeta(beta, { moveSlider: true });
+    });
+  });
+
+  // ============================================================
+  // "FEEL" CANVAS — relativistic starfield with aberration
+  // ============================================================
+  const feelCanvas = document.getElementById('feel-canvas');
+  const feelCtx = feelCanvas.getContext('2d');
+  const feelOverlay = document.getElementById('feel-overlay');
+  let feelStars = [];
+  let currentBeta = 0.5;
+  let currentGamma = 1.155;
+
+  function resizeFeel() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = feelCanvas.getBoundingClientRect();
+    feelCanvas.width = rect.width * dpr;
+    feelCanvas.height = rect.height * dpr;
+    feelCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    initFeelStars();
+  }
+
+  function initFeelStars() {
+    feelStars = [];
+    // Generate stars uniformly on a sphere (rest-frame directions)
+    for (let i = 0; i < 800; i++) {
+      const u = Math.random() * 2 - 1;         // cos(theta)
+      const phi = Math.random() * Math.PI * 2;
+      const sinTheta = Math.sqrt(1 - u * u);
+      feelStars.push({
+        x: sinTheta * Math.cos(phi),
+        y: sinTheta * Math.sin(phi),
+        z: u,                                  // forward = +z
+        bright: Math.pow(Math.random(), 2.5) * 0.9 + 0.1,
+      });
+    }
+  }
+
+  // Relativistic aberration: star that is at angle θ' in ship frame relates to
+  // rest-frame angle θ via cos θ = (cos θ' + β) / (1 + β cos θ')
+  // We have rest-frame direction; transform to ship-frame direction θ'.
+  // cos θ' = (cos θ - β) / (1 - β cos θ)
+  function updateFeel(beta, gamma) {
+    currentBeta = beta;
+    currentGamma = gamma;
+
+    // Update overlay text
+    const msg = feelVerdictMsg(beta, gamma);
+    feelOverlay.innerHTML = msg;
+  }
+
+  function feelVerdictMsg(beta, gamma) {
+    if (beta < 0.05) return `<strong>At ${formatBeta(beta)}:</strong> the sky looks exactly as it does from your garden. Relativity is effectively asleep.`;
+    if (beta < 0.3) return `<strong>At ${formatBeta(beta)}:</strong> stars ahead begin to bunch up slightly. Your coffee is still fine.`;
+    if (beta < 0.6) return `<strong>At ${formatBeta(beta)}:</strong> stars visibly shift forward. Behind you, a growing dark patch. Ahead, a faint glow.`;
+    if (beta < 0.9) return `<strong>At ${formatBeta(beta)}:</strong> most stars are now in front of you. The rear view is going dark.`;
+    if (beta < 0.99) return `<strong>At ${formatBeta(beta)}:</strong> the sky has compressed into a ring around your direction of motion.`;
+    if (gamma < 1000) return `<strong>At γ = ${gamma.toFixed(0)}:</strong> the entire sky is collapsed into a tight forward cone. Ambient starlight: gone. Ahead: a blueshifted disc of compressed universe.`;
+    return `<strong>At γ ≈ ${gamma.toExponential(1)}:</strong> you see a pinprick of blue-white fire directly ahead. Everything else is behind the event horizon of your own velocity.`;
+  }
+
+  function drawFeel() {
+    const rect = feelCanvas.getBoundingClientRect();
+    const w = rect.width;
+    const h = rect.height;
+    const cx = w / 2;
+    const cy = h / 2;
+    const R = Math.min(w, h) * 0.48;
+
+    // Background gradient — gets bluer forward as you speed up
+    const g = feelCtx.createRadialGradient(cx, cy, 0, cx, cy, R * 2);
+    const blueshift = Math.min(1, currentBeta * 1.2);
+    g.addColorStop(0, `rgba(${Math.round(30 + blueshift * 100)}, ${Math.round(20 + blueshift * 120)}, ${Math.round(50 + blueshift * 180)}, 1)`);
+    g.addColorStop(0.5, 'rgba(8, 4, 20, 1)');
+    g.addColorStop(1, '#000');
+    feelCtx.fillStyle = g;
+    feelCtx.fillRect(0, 0, w, h);
+
+    // Draw each star after aberration transformation
+    // We render the sphere as a 2D view: forward = centre, angular radius = θ'
+    // project θ' onto planar radius r = R * (θ' / π)
+    // So when β=0, stars uniformly fill the disc; as β→1, they crowd into centre.
+    const beta = Math.min(currentBeta, 0.9999999999);
+
+    for (const s of feelStars) {
+      const cosTheta = s.z;
+      // Aberration (observer moving toward +z). A star arriving from angle θ
+      // in the rest frame appears at angle θ' in the moving frame where
+      // cos θ' = (cos θ + β) / (1 + β cos θ). β > 0 bends stars FORWARD.
+      const cosThetaPrime = (cosTheta + beta) / (1 + beta * cosTheta);
+      const cosClamped = Math.max(-1, Math.min(1, cosThetaPrime));
+      const thetaPrime = Math.acos(cosClamped);
+
+      // Azimuth stays the same (boost is along z-axis)
+      const phi = Math.atan2(s.y, s.x);
+
+      // Planar radius: normalised angular distance from forward direction
+      const r = R * (thetaPrime / Math.PI);
+      const px = cx + r * Math.cos(phi);
+      const py = cy + r * Math.sin(phi);
+
+      if (px < -5 || px > w + 5 || py < -5 || py > h + 5) continue;
+
+      // Doppler shift: stars ahead (small θ') are blueshifted & brighter
+      // Doppler factor D = 1 / [γ(1 - β cos θ')]
+      const D = 1 / (currentGamma * (1 - beta * cosClamped));
+      // Observed brightness scales ~ D^4 for surface brightness
+      const bright = s.bright * Math.pow(D, 2.2);
+      const size = 0.5 + Math.min(3, bright * 1.3);
+      const alpha = Math.min(1, 0.2 + bright * 0.9);
+
+      // Colour: ahead -> blue/white, behind -> red/dim
+      let colour;
+      if (cosThetaPrime > 0.6) colour = `rgba(220, 235, 255, ${alpha})`;
+      else if (cosThetaPrime > 0) colour = `rgba(255, 250, 230, ${alpha})`;
+      else if (cosThetaPrime > -0.5) colour = `rgba(255, 200, 140, ${alpha * 0.7})`;
+      else colour = `rgba(255, 100, 70, ${alpha * 0.4})`;
+
+      feelCtx.fillStyle = colour;
+      feelCtx.beginPath();
+      feelCtx.arc(px, py, size, 0, Math.PI * 2);
+      feelCtx.fill();
+    }
+
+    // Forward cone indicator (subtle)
+    feelCtx.strokeStyle = 'rgba(255, 179, 71, 0.15)';
+    feelCtx.lineWidth = 1;
+    feelCtx.beginPath();
+    feelCtx.arc(cx, cy, 4, 0, Math.PI * 2);
+    feelCtx.stroke();
+    feelCtx.fillStyle = 'rgba(255, 179, 71, 0.08)';
+    feelCtx.font = '10px "JetBrains Mono", monospace';
+    feelCtx.fillText('↑ direction of motion', cx + 10, cy + 4);
+  }
+
+  function feelLoop() {
+    drawFeel();
+    requestAnimationFrame(feelLoop);
+  }
+
+  window.addEventListener('resize', resizeFeel);
+  resizeFeel();
+  requestAnimationFrame(feelLoop);
+
+  // initial sim render (default = ½c)
+  setBeta(0.5, { moveSlider: true });
+
+  // ============================================================
+  // SCROLL REVEAL
+  // ============================================================
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ============================================================
+  // SHARE BUTTONS
+  // ============================================================
+  const shareUrl = () => window.location.href;
+  const shareText = "4.37 light-years to Alpha Centauri — in 10 minutes flat, if you know how to work the loophole. A little interactive relativity:";
+
+  document.getElementById('share-linkedin').addEventListener('click', (e) => {
+    e.preventDefault();
+    const u = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl())}`;
+    window.open(u, '_blank', 'noopener');
+  });
+  document.getElementById('share-twitter').addEventListener('click', (e) => {
+    e.preventDefault();
+    const u = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl())}`;
+    window.open(u, '_blank', 'noopener');
+  });
+  document.getElementById('share-copy').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    try {
+      await navigator.clipboard.writeText(shareUrl());
+      const orig = btn.textContent;
+      btn.textContent = 'Copied ✓';
+      setTimeout(() => { btn.textContent = orig; }, 1800);
+    } catch {
+      btn.textContent = 'Copy failed';
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>
