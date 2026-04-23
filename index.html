@@ -422,6 +422,74 @@
   }
   .sim-verdict strong { color: var(--amber); }
 
+  /* ========== 1g Rocket callout panel ========== */
+  .rocket-panel {
+    margin-top: 1.8rem;
+    padding: 1.8rem 1.7rem;
+    background: linear-gradient(150deg, rgba(127, 209, 255, 0.06), rgba(184, 255, 142, 0.04));
+    border: 1px solid rgba(127, 209, 255, 0.18);
+    border-radius: 18px;
+    backdrop-filter: blur(12px);
+  }
+  .rocket-panel .rocket-header { margin-bottom: 1rem; }
+  .rocket-eyebrow {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    padding: 0.25rem 0.7rem;
+    border: 1px solid rgba(127, 209, 255, 0.25);
+    border-radius: 999px;
+    margin-bottom: 0.7rem;
+  }
+  .rocket-panel h3 {
+    font-size: clamp(1.2rem, 2.4vw, 1.5rem);
+    color: var(--ink);
+    margin-bottom: 0;
+  }
+  .rocket-panel p { font-size: 0.95rem; margin-top: 0.9rem; }
+  .rocket-grid {
+    margin-top: 1.3rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.8rem;
+  }
+  .rocket-cell {
+    padding: 0.95rem 1.05rem;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+  }
+  .rocket-cell-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.4rem;
+  }
+  .rocket-cell-val {
+    font-family: var(--mono);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .rocket-cell-sub {
+    font-size: 0.72rem;
+    color: var(--ink-dim);
+    margin-top: 0.25rem;
+    line-height: 1.4;
+  }
+  .rocket-footnote {
+    margin-top: 1.2rem;
+    font-size: 0.9rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(127, 209, 255, 0.12);
+    color: var(--ink-dim);
+  }
+  .rocket-footnote strong { color: var(--cyan); }
+
   /* ========== Visualization canvas for the "feel" ========== */
   .feel-canvas-wrap {
     position: relative;
@@ -729,6 +797,50 @@
         At half light-speed, you'd age about 7.5 years on the journey while your
         twin on Earth ages 8.7 years. A decent head-start on retirement.
       </div>
+    </div>
+
+    <!-- ===== 1g flip-and-brake callout ===== -->
+    <div class="rocket-panel">
+      <div class="rocket-header">
+        <span class="rocket-eyebrow">The humane option</span>
+        <h3>Accelerate at 1g, flip at halfway, brake at 1g.</h3>
+      </div>
+      <p>
+        A constant <strong>Earth-gravity</strong> push. You feel exactly as
+        heavy as you do right now, forever. Halfway there (2.185 light-years
+        in), you flip the ship end-over-end and fire the engines the other
+        way, braking the rest of the trip. You arrive at rest.
+      </p>
+      <div class="rocket-grid">
+        <div class="rocket-cell">
+          <div class="rocket-cell-label">Acceleration</div>
+          <div class="rocket-cell-val">1 g</div>
+          <div class="rocket-cell-sub">9.81 m/s² — you can still drink coffee</div>
+        </div>
+        <div class="rocket-cell">
+          <div class="rocket-cell-label">Earth sees</div>
+          <div class="rocket-cell-val accent-cyan" id="rocket-earth">5.87 years</div>
+          <div class="rocket-cell-sub">Mission Control waits</div>
+        </div>
+        <div class="rocket-cell">
+          <div class="rocket-cell-label">You feel</div>
+          <div class="rocket-cell-val accent-amber" id="rocket-ship">3.58 years</div>
+          <div class="rocket-cell-sub">Proper time on your wrist</div>
+        </div>
+        <div class="rocket-cell">
+          <div class="rocket-cell-label">Peak γ (at midpoint)</div>
+          <div class="rocket-cell-val accent-coral" id="rocket-gamma">3.25</div>
+          <div class="rocket-cell-sub">Peak velocity ≈ 0.95 c</div>
+        </div>
+      </div>
+      <p class="rocket-footnote">
+        This is the scenario most science-fiction-adjacent engineers actually
+        dream about. No exotic g-forces, no energy bills measured in
+        civilisations. Just a very, <em>very</em> efficient engine that can
+        sustain 1g for years. Humanity can't build one yet — but the physics
+        is tame. <strong>3.58 years of your life</strong> for a round trip to
+        the nearest star: that's the deal Einstein puts on the table.
+      </p>
     </div>
   </section>
 
@@ -1290,6 +1402,23 @@
 
   // initial sim render (default = ½c)
   setBeta(0.5, { moveSlider: true });
+
+  // ============================================================
+  // 1g FLIP-AND-BRAKE numbers (rendered once at load)
+  // ============================================================
+  (function renderRocket() {
+    const a = 9.81;
+    const halfD = DIST_M / 2;
+    const gammaMax = 1 + a * halfD / (C * C);
+    const tauHalf = (C / a) * Math.acosh(gammaMax);
+    const tHalf = (C / a) * Math.sqrt(gammaMax * gammaMax - 1);
+    const earthEl = document.getElementById('rocket-earth');
+    const shipEl = document.getElementById('rocket-ship');
+    const gammaEl = document.getElementById('rocket-gamma');
+    if (earthEl) earthEl.textContent = formatTime(2 * tHalf);
+    if (shipEl) shipEl.textContent = formatTime(2 * tauHalf);
+    if (gammaEl) gammaEl.textContent = gammaMax.toFixed(2);
+  })();
 
   // ============================================================
   // SCROLL REVEAL
