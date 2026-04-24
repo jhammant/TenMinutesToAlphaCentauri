@@ -188,7 +188,7 @@
   /* ========== Distance visualization ========== */
   .distance-viz {
     margin-top: 2.5rem;
-    padding: 2rem 1.2rem;
+    padding: 2.5rem 2rem 2rem;
     background: var(--glass);
     border: 1px solid var(--glass-border);
     border-radius: 18px;
@@ -196,47 +196,99 @@
   }
   .ruler {
     position: relative;
-    height: 60px;
-    background: linear-gradient(90deg, rgba(127, 209, 255, 0.08), rgba(255, 179, 71, 0.08));
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    overflow: visible;
+    height: 90px;
+    padding: 0 28px;
+  }
+  .ruler-axis {
+    position: absolute;
+    left: 28px;
+    right: 28px;
+    top: 50%;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(127, 209, 255, 0.55), rgba(255, 255, 255, 0.2), rgba(255, 179, 71, 0.55));
+    border-radius: 2px;
+    transform: translateY(-50%);
   }
   .ruler-tick {
     position: absolute;
-    top: 0;
-    bottom: 0;
+    top: 50%;
     width: 1px;
-    background: rgba(255, 255, 255, 0.1);
+    height: 18px;
+    background: rgba(255, 255, 255, 0.32);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
   }
-  .ruler-marker {
+  .ruler-tick-label {
+    position: absolute;
+    top: calc(50% - 22px);
+    transform: translate(-50%, -100%);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--ink-dim);
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+  }
+  .ruler-endpoint {
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.55rem;
-    white-space: nowrap;
   }
+  .ruler-endpoint-sun { left: 28px; transform: translate(-50%, -50%); color: var(--cyan); }
+  .ruler-endpoint-alpha { right: 28px; transform: translate(50%, -50%); color: var(--amber); }
   .ruler-dot {
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
-    box-shadow: 0 0 14px currentColor;
+    box-shadow: 0 0 16px currentColor;
     flex-shrink: 0;
   }
-  .ruler-label {
+  .ruler-endpoint-sun .ruler-dot {
+    background: radial-gradient(circle, #ffffff 0%, #a8dbff 45%, #4488ff 100%);
+  }
+  .ruler-endpoint-alpha .ruler-dot {
+    width: 22px;
+    height: 22px;
+    background: radial-gradient(circle, #ffffff 0%, #ffd27a 40%, #ff6b5e 100%);
+  }
+  .ruler-endpoint-label {
+    position: absolute;
+    top: calc(50% + 22px);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--ink);
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+  .ruler-stats {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  .ruler-stat {
+    text-align: center;
+    padding: 1rem 0.75rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+  }
+  .ruler-stat-num {
+    font-family: var(--mono);
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
+  }
+  .ruler-stat-lbl {
     font-size: 0.72rem;
     color: var(--ink-dim);
-    font-family: var(--mono);
-    line-height: 1.15;
+    line-height: 1.3;
   }
-  .ruler-label strong { display: block; color: var(--ink); font-size: 0.8rem; margin-bottom: 0.1rem; }
-  .ruler-marker.left { left: 0.8rem; color: var(--cyan); flex-direction: row; }
-  .ruler-marker.right { right: 0.8rem; color: var(--amber); flex-direction: row-reverse; }
-  .ruler-marker.right .ruler-label { text-align: right; }
-  .ruler-marker.right .ruler-dot { width: 18px; height: 18px; background: radial-gradient(circle, #ffd27a, #ff6b5e); }
-  .ruler-marker.left .ruler-dot { background: radial-gradient(circle, #a8dbff, #4488ff); }
+  .ruler-stat.accent-photon .ruler-stat-num { color: #a8dbff; }
+  .ruler-stat.accent-voyager .ruler-stat-num { color: #ffd27a; }
+  .ruler-stat.accent-grim .ruler-stat-num { color: #ff8a7a; }
 
   /* ========== Options grid ========== */
   .options-grid {
@@ -631,8 +683,12 @@
     section { padding: 5rem 1.2rem; }
     .option-row { grid-template-columns: 1.8rem 1fr; gap: 0.7rem; padding: 0.9rem 1rem; }
     .option-time { grid-column: 2; text-align: left; margin-top: 0.3rem; }
-    .ruler-marker.left .ruler-label,
-    .ruler-marker.right .ruler-label { font-size: 0.65rem; }
+    .distance-viz { padding: 2rem 1.2rem 1.5rem; }
+    .ruler-stats { grid-template-columns: 1fr; gap: 0.6rem; }
+    .ruler-stat { padding: 0.85rem 0.75rem; }
+    .ruler-stat-num { font-size: 1.15rem; }
+    .ruler-tick-label { font-size: 0.62rem; }
+    .ruler-endpoint-label { font-size: 0.72rem; }
   }
 
   /* Scroll reveal */
@@ -706,19 +762,31 @@
 
     <div class="distance-viz">
       <div class="ruler" id="ruler">
-        <!-- ticks inserted by JS -->
-        <div class="ruler-marker left">
+        <div class="ruler-axis"></div>
+        <!-- ticks + tick labels injected by JS -->
+        <div class="ruler-endpoint ruler-endpoint-sun">
           <div class="ruler-dot"></div>
-          <div class="ruler-label"><strong>☀ Sun</strong>You are here</div>
+          <div class="ruler-endpoint-label">☀ Sun</div>
         </div>
-        <div class="ruler-marker right">
+        <div class="ruler-endpoint ruler-endpoint-alpha">
           <div class="ruler-dot"></div>
-          <div class="ruler-label"><strong>α Cen</strong>4.37 ly away</div>
+          <div class="ruler-endpoint-label">α Cen</div>
         </div>
       </div>
-      <p style="font-size: 0.78rem; color: var(--ink-faint); margin-top: 0.8rem; font-family: var(--mono); text-align: center;">
-        Each tick = 1 light-year. Even this ruler is a lie — the real distance is so large your monitor can't represent it honestly.
-      </p>
+      <div class="ruler-stats">
+        <div class="ruler-stat accent-photon">
+          <div class="ruler-stat-num">4 y 4 mo</div>
+          <div class="ruler-stat-lbl">for a photon<br/>to cross this</div>
+        </div>
+        <div class="ruler-stat accent-voyager">
+          <div class="ruler-stat-num">0.06%</div>
+          <div class="ruler-stat-lbl">Voyager 1's progress<br/>after 47 years</div>
+        </div>
+        <div class="ruler-stat accent-grim">
+          <div class="ruler-stat-num">75,000 y</div>
+          <div class="ruler-stat-lbl">to finish the trip<br/>at Voyager's speed</div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1070,10 +1138,16 @@
   // ============================================================
   const ruler = document.getElementById('ruler');
   for (let i = 1; i <= 4; i++) {
+    const pos = `calc(28px + (100% - 56px) * ${i / 4.37})`;
     const tick = document.createElement('div');
     tick.className = 'ruler-tick';
-    tick.style.left = `${(i / 4.37) * 100}%`;
+    tick.style.left = pos;
     ruler.appendChild(tick);
+    const label = document.createElement('div');
+    label.className = 'ruler-tick-label';
+    label.style.left = pos;
+    label.textContent = `${i} ly`;
+    ruler.appendChild(label);
   }
 
   // ============================================================
