@@ -483,6 +483,133 @@
   }
   .sim-verdict strong { color: var(--amber); }
 
+  /* Twin clocks (live ticking demo) */
+  .sim-twins {
+    margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0.8rem;
+    align-items: stretch;
+  }
+  .twin-clock {
+    padding: 1rem 1rem 0.9rem;
+    background: rgba(0, 0, 0, 0.32);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    text-align: center;
+  }
+  .twin-clock.earth { border-left: 3px solid var(--cyan); }
+  .twin-clock.ship { border-right: 3px solid var(--amber); }
+  .twin-label {
+    font-size: 0.66rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.5rem;
+  }
+  .twin-time {
+    font-family: var(--mono);
+    font-size: clamp(1.3rem, 3.5vw, 1.9rem);
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    min-height: 1.1em;
+  }
+  .twin-clock.earth .twin-time { color: #a8dbff; }
+  .twin-clock.ship .twin-time { color: #ffd27a; }
+  .twin-hint {
+    font-size: 0.68rem;
+    color: var(--ink-faint);
+    margin-top: 0.45rem;
+    font-family: var(--mono);
+  }
+  .twin-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+  }
+  .twin-btn {
+    padding: 0.55rem 0.95rem;
+    font-size: 0.76rem;
+    font-family: var(--mono);
+    background: var(--glass);
+    color: var(--ink);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    min-width: 110px;
+  }
+  .twin-btn:hover { border-color: var(--amber); color: var(--amber); }
+  .twin-btn.primary {
+    background: linear-gradient(120deg, var(--amber), var(--coral));
+    color: #1a0a00; border: none; font-weight: 700;
+  }
+  .twin-btn.primary:hover { color: #1a0a00; box-shadow: 0 6px 18px rgba(255, 107, 94, 0.3); }
+
+  /* Lifetime callout */
+  .sim-lifetime {
+    margin-top: 1.1rem;
+    padding: 1rem 1.2rem;
+    background: rgba(199, 157, 255, 0.06);
+    border: 1px solid rgba(199, 157, 255, 0.18);
+    border-left: 3px solid var(--violet);
+    border-radius: 12px;
+    font-size: 0.92rem;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .sim-lifetime label { display: inline-flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; }
+  .sim-lifetime input[type=number] {
+    width: 64px;
+    padding: 0.2rem 0.4rem;
+    background: rgba(0, 0, 0, 0.4);
+    color: var(--ink);
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 0.95rem;
+  }
+  .sim-lifetime input[type=number]:focus { outline: none; border-color: var(--violet); }
+  .sim-lifetime .lifetime-result { margin-top: 0.7rem; font-size: 0.9rem; color: var(--ink-dim); }
+  .sim-lifetime .lifetime-result strong { color: var(--violet); }
+  .sim-lifetime .lifetime-result .bad { color: var(--coral); }
+
+  /* Sound toggle */
+  .sim-sound {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--glass-border);
+    color: var(--ink-dim);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 2;
+  }
+  .sim-sound:hover { border-color: var(--amber); color: var(--amber); }
+  .sim-sound.on { color: var(--amber); border-color: var(--amber); background: rgba(255, 179, 71, 0.12); }
+  .sim-panel { position: relative; }
+
+  /* Option energy sub-line */
+  .option-energy {
+    font-size: 0.68rem;
+    color: var(--ink-faint);
+    margin-top: 0.25rem;
+    letter-spacing: 0.02em;
+  }
+
   /* ========== 1g Rocket callout panel ========== */
   .rocket-panel {
     margin-top: 1.8rem;
@@ -550,6 +677,103 @@
     color: var(--ink-dim);
   }
   .rocket-footnote strong { color: var(--cyan); }
+
+  /* Flip-and-brake interactive timeline */
+  .flip-viz {
+    margin-top: 1.3rem;
+    padding: 1.2rem 1.2rem 1.1rem;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(127, 209, 255, 0.15);
+    border-radius: 14px;
+  }
+  .flip-track {
+    position: relative;
+    height: 48px;
+    margin-bottom: 0.3rem;
+  }
+  .flip-path {
+    position: absolute;
+    left: 28px; right: 28px; top: 50%;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(127, 209, 255, 0.5) 0%, rgba(184, 255, 142, 0.55) 35%, rgba(255, 179, 71, 0.6) 50%, rgba(184, 255, 142, 0.55) 65%, rgba(255, 107, 94, 0.5) 100%);
+    transform: translateY(-50%);
+    border-radius: 1px;
+  }
+  .flip-midpoint {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1px;
+    height: 22px;
+    background: rgba(255, 179, 71, 0.6);
+    transform: translate(-50%, -50%);
+  }
+  .flip-ship {
+    position: absolute;
+    top: 50%;
+    left: 28px;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    transition: left 0.1s linear, transform 0.3s ease;
+    filter: drop-shadow(0 0 8px rgba(255, 179, 71, 0.7));
+    pointer-events: none;
+    will-change: left;
+  }
+  .flip-ship.brake { transform: translate(-50%, -50%) scaleX(-1); }
+  .flip-endpoint {
+    position: absolute; top: 50%; width: 22px; height: 22px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 50%;
+    text-align: center; line-height: 20px;
+    font-size: 0.9rem;
+    transform: translate(-50%, -50%);
+  }
+  .flip-endpoint.left { left: 14px; color: var(--cyan); }
+  .flip-endpoint.right { left: calc(100% - 14px); color: var(--amber); }
+  .flip-phase {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    color: var(--cyan);
+    margin: 0.5rem 0 0.6rem;
+    min-height: 1em;
+  }
+  .flip-phase.brake { color: var(--coral); }
+  .flip-phase.done { color: var(--amber); }
+  .flip-timeline input[type=range] {
+    width: 100%; -webkit-appearance: none; appearance: none;
+    background: transparent; cursor: pointer; height: 22px;
+  }
+  .flip-timeline input[type=range]::-webkit-slider-runnable-track {
+    height: 3px; border-radius: 2px;
+    background: linear-gradient(90deg, var(--cyan) 0%, var(--amber) 50%, var(--coral) 100%);
+  }
+  .flip-timeline input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+    background: #fff; margin-top: -6.5px; border: none;
+    box-shadow: 0 0 8px rgba(127, 209, 255, 0.7);
+  }
+  .flip-timeline input[type=range]::-moz-range-track {
+    height: 3px; border-radius: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--coral));
+  }
+  .flip-stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.4rem 0.6rem;
+    margin-top: 0.4rem;
+    font-family: var(--mono);
+  }
+  .flip-stat { text-align: center; }
+  .flip-lbl {
+    font-size: 0.6rem; color: var(--ink-faint);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    display: block;
+  }
+  .flip-val { color: var(--ink); font-weight: 600; font-size: 0.85rem; margin-top: 0.15rem; display: block; }
+  .flip-controls { display: flex; justify-content: center; gap: 0.6rem; margin-top: 0.9rem; }
 
   /* ========== Visualization canvas for the "feel" ========== */
   .feel-canvas-wrap {
@@ -689,6 +913,14 @@
     .ruler-stat-num { font-size: 1.15rem; }
     .ruler-tick-label { font-size: 0.62rem; }
     .ruler-endpoint-label { font-size: 0.72rem; }
+    .sim-panel { padding: 1.6rem 1.2rem; }
+    .sim-twins { grid-template-columns: 1fr; gap: 0.6rem; }
+    .twin-controls { flex-direction: row; justify-content: center; padding: 0.2rem 0; }
+    .twin-btn { min-width: 0; }
+    .flip-stats { grid-template-columns: repeat(3, 1fr); }
+    .rocket-panel { padding: 1.4rem 1.2rem; }
+    .feel-canvas-wrap { height: 320px; }
+    .sim-sound { top: 0.7rem; right: 0.7rem; width: 34px; height: 34px; font-size: 1rem; }
   }
 
   /* Scroll reveal */
@@ -823,6 +1055,7 @@
     </p>
 
     <div class="sim-panel">
+      <button class="sim-sound" id="sim-sound" aria-label="Toggle engine hum" title="Engine hum — off">🔇</button>
       <div class="sim-dial-wrap">
         <div>
           <div class="sim-readout" id="sim-velocity">0.500 c</div>
@@ -870,6 +1103,31 @@
         </div>
       </div>
 
+      <div class="sim-twins">
+        <div class="twin-clock earth">
+          <div class="twin-label">Earth clock</div>
+          <div class="twin-time" id="twin-earth-time">0 s</div>
+          <div class="twin-hint">ticks at rate γ</div>
+        </div>
+        <div class="twin-controls">
+          <button class="twin-btn primary" id="twin-start">Launch ▶</button>
+          <button class="twin-btn" id="twin-reset">Reset ↺</button>
+        </div>
+        <div class="twin-clock ship">
+          <div class="twin-label">Your clock</div>
+          <div class="twin-time" id="twin-ship-time">0 s</div>
+          <div class="twin-hint">ticks at rate 1</div>
+        </div>
+      </div>
+
+      <div class="sim-lifetime">
+        <label>If you leave today aged
+          <input type="number" id="age-input" min="1" max="120" value="30" />
+          years…
+        </label>
+        <div class="lifetime-result" id="lifetime-result">—</div>
+      </div>
+
       <div class="sim-verdict" id="sim-verdict">
         At half light-speed, you'd age about 7.5 years on the journey while your
         twin on Earth ages 8.7 years. A decent head-start on retirement.
@@ -910,6 +1168,31 @@
           <div class="rocket-cell-sub">Peak velocity ≈ 0.95 c</div>
         </div>
       </div>
+      <div class="flip-viz">
+        <div class="flip-track">
+          <div class="flip-path"></div>
+          <div class="flip-midpoint"></div>
+          <div class="flip-endpoint left">☀</div>
+          <div class="flip-endpoint right">α</div>
+          <div class="flip-ship" id="flip-ship">🚀</div>
+        </div>
+        <div class="flip-phase" id="flip-phase">▶ ACCELERATING @ 1g</div>
+        <div class="flip-timeline">
+          <input type="range" id="flip-scrub" min="0" max="1000" value="0" step="1" aria-label="Scrub ship-proper-time" />
+        </div>
+        <div class="flip-stats">
+          <div class="flip-stat"><span class="flip-lbl">Ship τ</span><span class="flip-val" id="flip-tau">0</span></div>
+          <div class="flip-stat"><span class="flip-lbl">Earth t</span><span class="flip-val" id="flip-t">0</span></div>
+          <div class="flip-stat"><span class="flip-lbl">β</span><span class="flip-val" id="flip-beta">0</span></div>
+          <div class="flip-stat"><span class="flip-lbl">γ</span><span class="flip-val" id="flip-gamma">1</span></div>
+          <div class="flip-stat"><span class="flip-lbl">Distance</span><span class="flip-val" id="flip-dist">0 ly</span></div>
+        </div>
+        <div class="flip-controls">
+          <button class="twin-btn primary" id="flip-play">Play the whole trip ▶</button>
+          <button class="twin-btn" id="flip-reset">Reset ↺</button>
+        </div>
+      </div>
+
       <p class="rocket-footnote">
         This is the scenario most science-fiction-adjacent engineers actually
         dream about. No exotic g-forces, no energy bills measured in
@@ -1204,9 +1487,43 @@
     return { earth_s: t, ship_s: t / gamma };
   }
 
+  // KE per 70 kg person, expressed in human-scale units.
+  const MASS_KG = 70;
+  const WORLD_ENERGY_YR = 6.2e20;   // Joules, 2023-ish
+  const HIROSHIMA_J = 6.3e13;       // Joules per Hiroshima bomb
+  const TNT_KT = 4.184e12, TNT_MT = 4.184e15, TNT_GT = 4.184e18;
+
+  // KE per unit mass. For β < 0.01, Newtonian ½v² avoids catastrophic
+  // cancellation in (γ-1)c² (floating-point eats tiny γ-1).
+  function kePerKg(opt) {
+    if (opt.special === 'rocket-1g') {
+      const a = 9.81, halfD = DIST_M / 2;
+      return (a * halfD / (C * C)) * C * C;  // (γmax-1)c² at flip
+    }
+    if (opt.special === 'gamma-230k') return 229999 * C * C;
+    const beta = opt.vFrac !== undefined ? opt.vFrac : (opt.v || 0) / C;
+    if (beta < 0.01) return 0.5 * beta * beta * C * C;
+    const gamma = 1 / Math.sqrt(1 - beta * beta);
+    return (gamma - 1) * C * C;
+  }
+
+  function formatKE(j) {
+    if (j < 1e3) return `${j.toFixed(0)} J`;
+    if (j < 1e6) return `${(j/1e3).toFixed(1)} kJ`;
+    if (j < 1e9) return `${(j/1e6).toFixed(1)} MJ`;
+    if (j < 1e12) return `${(j/1e9).toFixed(1)} GJ`;
+    if (j < TNT_MT) return `${(j/TNT_KT).toFixed(1)} kt TNT`;
+    if (j < TNT_GT) return `${(j/TNT_MT).toFixed(1)} Mt TNT`;
+    if (j < WORLD_ENERGY_YR) return `${(j/TNT_GT).toFixed(1)} Gt TNT`;
+    const yr = j / WORLD_ENERGY_YR;
+    if (yr < 1e4) return `${yr.toFixed(yr < 10 ? 1 : 0)}× world / yr`;
+    return `${yr.toExponential(1)}× world / yr`;
+  }
+
   const optionsGrid = document.getElementById('options-grid');
   for (const opt of options) {
     const { earth_s, ship_s } = computeEarthShip(opt);
+    const ke = kePerKg(opt) * MASS_KG;
     const row = document.createElement('div');
     row.className = 'option-row';
     row.style.setProperty('--option-color', opt.color);
@@ -1222,7 +1539,10 @@
         <strong>${opt.label}</strong>
         <span>${opt.sub}</span>
       </div>
-      <div class="option-time">${timeHtml}</div>
+      <div class="option-time">
+        ${timeHtml}
+        <div class="option-energy">⚡ ${formatKE(ke)} / person</div>
+      </div>
     `;
     optionsGrid.appendChild(row);
   }
@@ -1301,6 +1621,8 @@
 
     elVerdict.innerHTML = verdict(beta, gamma, ship_s);
     updateFeel(beta, gamma);
+    if (typeof updateLifetime === 'function') updateLifetime();
+    if (typeof updateAudio === 'function') updateAudio();
 
     // highlight matching preset (compare gamma on a log scale for robustness)
     presetBtns.forEach(b => {
@@ -1450,14 +1772,7 @@
       const size = 0.5 + Math.min(3, bright * 1.3);
       const alpha = Math.min(1, 0.2 + bright * 0.9);
 
-      // Colour: ahead -> blue/white, behind -> red/dim
-      let colour;
-      if (cosThetaPrime > 0.6) colour = `rgba(220, 235, 255, ${alpha})`;
-      else if (cosThetaPrime > 0) colour = `rgba(255, 250, 230, ${alpha})`;
-      else if (cosThetaPrime > -0.5) colour = `rgba(255, 200, 140, ${alpha * 0.7})`;
-      else colour = `rgba(255, 100, 70, ${alpha * 0.4})`;
-
-      feelCtx.fillStyle = colour;
+      feelCtx.fillStyle = dopplerColor(D, alpha);
       feelCtx.beginPath();
       feelCtx.arc(px, py, size, 0, Math.PI * 2);
       feelCtx.fill();
@@ -1483,13 +1798,10 @@
   resizeFeel();
   requestAnimationFrame(feelLoop);
 
-  // initial sim render (default = ½c)
-  setBeta(0.5, { moveSlider: true });
-
   // ============================================================
   // 1g FLIP-AND-BRAKE numbers (rendered once at load)
   // ============================================================
-  (function renderRocket() {
+  const ROCKET = (function renderRocket() {
     const a = 9.81;
     const halfD = DIST_M / 2;
     const gammaMax = 1 + a * halfD / (C * C);
@@ -1501,7 +1813,267 @@
     if (earthEl) earthEl.textContent = formatTime(2 * tHalf);
     if (shipEl) shipEl.textContent = formatTime(2 * tauHalf);
     if (gammaEl) gammaEl.textContent = gammaMax.toFixed(2);
+    return { a, halfD, gammaMax, tauHalf, tHalf };
   })();
+
+  // ============================================================
+  // TWIN CLOCKS — live-ticking Earth vs Ship demo
+  //   Ship ticks at 1× real time; Earth ticks at γ× real time.
+  //   (Conceptually: you are on the ship; your watch is your real-time clock.
+  //    Meanwhile Earth's clock — by your moving frame's simultaneity — advances
+  //    at rate γ per real-second of yours, up to the instant-turnaround idealization.)
+  // ============================================================
+  const twinEarthEl = document.getElementById('twin-earth-time');
+  const twinShipEl = document.getElementById('twin-ship-time');
+  const twinStartBtn = document.getElementById('twin-start');
+  const twinResetBtn = document.getElementById('twin-reset');
+  const twinState = { running: false, accShip: 0, accEarth: 0, lastTick: 0 };
+
+  function fmtClock(seconds) {
+    if (seconds < 1) return `${(seconds * 1000).toFixed(0)} ms`;
+    if (seconds < 60) return `${seconds.toFixed(1)} s`;
+    if (seconds < 3600) return `${Math.floor(seconds/60)}m ${Math.floor(seconds%60)}s`;
+    if (seconds < 86400) return `${Math.floor(seconds/3600)}h ${Math.floor((seconds%3600)/60)}m`;
+    if (seconds < YEAR_S) return `${Math.floor(seconds/86400)}d ${Math.floor((seconds%86400)/3600)}h`;
+    const y = seconds / YEAR_S;
+    if (y < 100) return `${y.toFixed(2)} yr`;
+    if (y < 1e4) return `${y.toFixed(0)} yr`;
+    if (y < 1e6) return `${(y/1e3).toFixed(1)}k yr`;
+    if (y < 1e9) return `${(y/1e6).toFixed(1)}M yr`;
+    return `${y.toExponential(1)} yr`;
+  }
+  function updateTwinDisplay() {
+    twinEarthEl.textContent = fmtClock(twinState.accEarth);
+    twinShipEl.textContent = fmtClock(twinState.accShip);
+  }
+  function twinTick(now) {
+    if (!twinState.running) return;
+    const dt = (now - twinState.lastTick) / 1000;
+    twinState.lastTick = now;
+    twinState.accShip += dt;
+    twinState.accEarth += dt * simState.gamma;
+    updateTwinDisplay();
+    requestAnimationFrame(twinTick);
+  }
+  twinStartBtn.addEventListener('click', () => {
+    if (twinState.running) {
+      twinState.running = false;
+      twinStartBtn.textContent = 'Resume ▶';
+    } else {
+      twinState.running = true;
+      twinState.lastTick = performance.now();
+      twinStartBtn.textContent = 'Pause ❚❚';
+      requestAnimationFrame(twinTick);
+    }
+  });
+  twinResetBtn.addEventListener('click', () => {
+    twinState.running = false;
+    twinState.accShip = 0;
+    twinState.accEarth = 0;
+    twinStartBtn.textContent = 'Launch ▶';
+    updateTwinDisplay();
+  });
+
+  // ============================================================
+  // LIFETIME CALCULATOR — "leave today aged X…"
+  // ============================================================
+  const ageInput = document.getElementById('age-input');
+  const lifetimeResult = document.getElementById('lifetime-result');
+
+  function updateLifetime() {
+    const age = Math.max(1, parseFloat(ageInput.value) || 30);
+    const beta = simState.beta, gamma = simState.gamma;
+    if (beta <= 0) {
+      lifetimeResult.innerHTML = `At velocity zero you never arrive. The departure lounge is particularly long.`;
+      return;
+    }
+    const earth_s = DIST_M / (beta * C);
+    const ship_s = earth_s / gamma;
+    const ageShip = age + ship_s / YEAR_S;
+    const ageEarth = age + earth_s / YEAR_S;
+    const LIFE = 85;
+
+    let shipMsg;
+    if (ageShip < LIFE) shipMsg = `You step onto α Cen aged <strong>${ageShip.toFixed(1)}</strong>`;
+    else if (ageShip < 150) shipMsg = `You arrive aged <strong>${Math.round(ageShip)}</strong> — past the usual expiry`;
+    else shipMsg = `You don't make it — the trip outlives you by <strong>${(ageShip - LIFE).toFixed(0)} years</strong>`;
+
+    let earthMsg;
+    if (ageEarth < LIFE) earthMsg = `your same-age friend at home is <strong>${ageEarth.toFixed(1)}</strong>`;
+    else if (ageEarth < 150) earthMsg = `your same-age friend is <strong class="bad">long retired at ${Math.round(ageEarth)}</strong>`;
+    else earthMsg = `your whole generation back on Earth is <strong class="bad">dead</strong> — and so is their great-great-grandchildren's`;
+
+    lifetimeResult.innerHTML = `${shipMsg}. Meanwhile ${earthMsg}.`;
+  }
+  ageInput.addEventListener('input', updateLifetime);
+
+  // ============================================================
+  // FLIP-AND-BRAKE interactive timeline
+  // ============================================================
+  (function initFlipViz() {
+    const { a, tauHalf, tHalf } = ROCKET;
+    const TAU_TOTAL = 2 * tauHalf;
+    const scrub = document.getElementById('flip-scrub');
+    const playBtn = document.getElementById('flip-play');
+    const resetBtn = document.getElementById('flip-reset');
+    const ship = document.getElementById('flip-ship');
+    const phase = document.getElementById('flip-phase');
+    const tauEl = document.getElementById('flip-tau');
+    const tEl = document.getElementById('flip-t');
+    const betaEl = document.getElementById('flip-beta');
+    const gammaEl = document.getElementById('flip-gamma');
+    const distEl = document.getElementById('flip-dist');
+    const PLAY_WALL_S = 14;  // wall-clock seconds to play full trip
+
+    let playing = false, lastTick = 0;
+
+    function updateAt(tauFrac) {
+      const tau = tauFrac * TAU_TOTAL;
+      let x, tEarth, beta, gamma, phaseLbl, phaseCls;
+      if (tau <= tauHalf) {
+        const u = a * tau / C;
+        x = (C * C / a) * (Math.cosh(u) - 1);
+        tEarth = (C / a) * Math.sinh(u);
+        beta = Math.tanh(u);
+        gamma = Math.cosh(u);
+        phaseLbl = '▶ ACCELERATING @ 1g'; phaseCls = '';
+        ship.classList.remove('brake');
+      } else if (tau < TAU_TOTAL) {
+        const tauRev = TAU_TOTAL - tau;
+        const u = a * tauRev / C;
+        x = DIST_M - (C * C / a) * (Math.cosh(u) - 1);
+        tEarth = 2 * tHalf - (C / a) * Math.sinh(u);
+        beta = Math.tanh(u);
+        gamma = Math.cosh(u);
+        phaseLbl = '◀ BRAKING @ 1g'; phaseCls = 'brake';
+        ship.classList.add('brake');
+      } else {
+        x = DIST_M; tEarth = 2 * tHalf; beta = 0; gamma = 1;
+        phaseLbl = '★ ARRIVED'; phaseCls = 'done';
+        ship.classList.remove('brake');
+      }
+      ship.style.left = `calc(28px + (100% - 56px) * ${Math.max(0, Math.min(1, x / DIST_M))})`;
+      phase.textContent = phaseLbl;
+      phase.className = 'flip-phase' + (phaseCls ? ' ' + phaseCls : '');
+      tauEl.textContent = formatTime(tau);
+      tEl.textContent = formatTime(tEarth);
+      betaEl.textContent = beta < 0.001
+        ? `${(beta * C / 1000).toFixed(0)} km/s`
+        : beta < 0.999 ? `${beta.toFixed(3)} c` : `${beta.toFixed(5)} c`;
+      gammaEl.textContent = gamma < 10 ? gamma.toFixed(2) : gamma.toFixed(1);
+      distEl.textContent = `${(x / LY).toFixed(2)} ly`;
+    }
+    updateAt(0);
+    scrub.addEventListener('input', () => {
+      if (playing) { playing = false; playBtn.textContent = 'Play the whole trip ▶'; }
+      updateAt(parseInt(scrub.value, 10) / 1000);
+    });
+    function loop(now) {
+      if (!playing) return;
+      const dt = (now - lastTick) / 1000;
+      lastTick = now;
+      let v = parseInt(scrub.value, 10) + (dt / PLAY_WALL_S) * 1000;
+      if (v >= 1000) {
+        v = 1000; playing = false; playBtn.textContent = 'Replay ↻';
+      }
+      scrub.value = v;
+      updateAt(v / 1000);
+      if (playing) requestAnimationFrame(loop);
+    }
+    playBtn.addEventListener('click', () => {
+      if (playing) {
+        playing = false; playBtn.textContent = 'Play the whole trip ▶'; return;
+      }
+      if (parseInt(scrub.value, 10) >= 1000) scrub.value = 0;
+      playing = true; lastTick = performance.now();
+      playBtn.textContent = 'Pause ❚❚';
+      requestAnimationFrame(loop);
+    });
+    resetBtn.addEventListener('click', () => {
+      playing = false; playBtn.textContent = 'Play the whole trip ▶';
+      scrub.value = 0; updateAt(0);
+    });
+  })();
+
+  // ============================================================
+  // ENGINE SOUND (Web Audio) — pitch tracks β, muted by default
+  // ============================================================
+  const soundBtn = document.getElementById('sim-sound');
+  let audioCtx = null, osc = null, osc2 = null, gainNode = null, soundOn = false;
+  function initAudio() {
+    if (audioCtx) return;
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 900;
+      gainNode = audioCtx.createGain();
+      gainNode.gain.value = 0;
+      osc = audioCtx.createOscillator();
+      osc.type = 'sawtooth'; osc.frequency.value = 60;
+      osc2 = audioCtx.createOscillator();
+      osc2.type = 'sine'; osc2.frequency.value = 120;
+      osc.connect(filter); osc2.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      osc.start(); osc2.start();
+    } catch (e) { audioCtx = null; }
+  }
+  function updateAudio() {
+    if (!audioCtx || !soundOn) return;
+    const b = Math.max(0, Math.min(0.9999999, simState.beta));
+    const f = 55 + b * 360;
+    osc.frequency.setTargetAtTime(f, audioCtx.currentTime, 0.12);
+    osc2.frequency.setTargetAtTime(f * 2.01, audioCtx.currentTime, 0.12);
+  }
+  soundBtn.addEventListener('click', () => {
+    soundOn = !soundOn;
+    initAudio();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const t = audioCtx.currentTime;
+    gainNode.gain.cancelScheduledValues(t);
+    gainNode.gain.linearRampToValueAtTime(soundOn ? 0.035 : 0, t + 0.25);
+    soundBtn.textContent = soundOn ? '🔊' : '🔇';
+    soundBtn.classList.toggle('on', soundOn);
+    soundBtn.title = soundOn ? 'Engine hum — on' : 'Engine hum — off';
+    updateAudio();
+  });
+
+  // ============================================================
+  // DOPPLER COLOR (used by feel canvas) — piecewise blackbody-ish temperature map
+  //   D < 1: redshift/dim;  D = 1: neutral;  D > 1: blueshift
+  // ============================================================
+  const DOPPLER_STOPS = [
+    [0.15, [50, 10, 10]],
+    [0.4,  [180, 70, 40]],
+    [0.65, [255, 150, 90]],
+    [0.9,  [255, 235, 210]],
+    [1.0,  [255, 255, 255]],
+    [1.3,  [200, 220, 255]],
+    [2.0,  [130, 170, 255]],
+    [3.5,  [100, 150, 255]],
+    [6.0,  [180, 210, 255]],
+  ];
+  function dopplerColor(D, alpha) {
+    const s = DOPPLER_STOPS;
+    if (D <= s[0][0]) { const c = s[0][1]; return `rgba(${c[0]},${c[1]},${c[2]},${alpha.toFixed(3)})`; }
+    if (D >= s[s.length-1][0]) { const c = s[s.length-1][1]; return `rgba(${c[0]},${c[1]},${c[2]},${alpha.toFixed(3)})`; }
+    for (let i = 1; i < s.length; i++) {
+      if (D <= s[i][0]) {
+        const a = s[i-1], b = s[i];
+        const t = (D - a[0]) / (b[0] - a[0]);
+        const r = (a[1][0] + (b[1][0]-a[1][0])*t) | 0;
+        const g = (a[1][1] + (b[1][1]-a[1][1])*t) | 0;
+        const bl = (a[1][2] + (b[1][2]-a[1][2])*t) | 0;
+        return `rgba(${r},${g},${bl},${alpha.toFixed(3)})`;
+      }
+    }
+    return `rgba(255,255,255,${alpha.toFixed(3)})`;
+  }
+
+  // initial sim render now that lifetime/audio wiring exists
+  setBeta(0.5, { moveSlider: true });
 
   // ============================================================
   // SCROLL REVEAL
