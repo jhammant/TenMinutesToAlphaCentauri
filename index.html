@@ -9,11 +9,19 @@
 <meta property="og:title" content="Ten Minutes to Alpha Centauri" />
 <meta property="og:description" content="4.37 light-years in 10 minutes flat. An interactive relativity explainer — play with the speed dial and watch Einstein bend your clock." />
 <meta property="og:type" content="website" />
+<meta property="og:url" content="https://jhammant.github.io/TenMinutesToAlphaCentauri/" />
+<meta property="og:image" content="https://jhammant.github.io/TenMinutesToAlphaCentauri/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Ten Minutes to Alpha Centauri — an interactive relativity explainer." />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Ten Minutes to Alpha Centauri" />
 <meta name="twitter:description" content="4.37 light-years in 10 minutes flat. An interactive relativity explainer — play with the speed dial and watch Einstein bend your clock." />
+<meta name="twitter:image" content="https://jhammant.github.io/TenMinutesToAlphaCentauri/og.png" />
 
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x2728;</text></svg>" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -204,11 +212,10 @@
   .ruler-marker {
     position: absolute;
     top: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateY(-50%);
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.55rem;
     white-space: nowrap;
   }
   .ruler-dot {
@@ -216,16 +223,18 @@
     height: 14px;
     border-radius: 50%;
     box-shadow: 0 0 14px currentColor;
+    flex-shrink: 0;
   }
   .ruler-label {
     font-size: 0.72rem;
     color: var(--ink-dim);
     font-family: var(--mono);
-    text-align: center;
+    line-height: 1.15;
   }
   .ruler-label strong { display: block; color: var(--ink); font-size: 0.8rem; margin-bottom: 0.1rem; }
-  .ruler-marker.left { left: 0%; color: var(--cyan); }
-  .ruler-marker.right { left: 100%; color: var(--amber); }
+  .ruler-marker.left { left: 0.8rem; color: var(--cyan); flex-direction: row; }
+  .ruler-marker.right { right: 0.8rem; color: var(--amber); flex-direction: row-reverse; }
+  .ruler-marker.right .ruler-label { text-align: right; }
   .ruler-marker.right .ruler-dot { width: 18px; height: 18px; background: radial-gradient(circle, #ffd27a, #ff6b5e); }
   .ruler-marker.left .ruler-dot { background: radial-gradient(circle, #a8dbff, #4488ff); }
 
